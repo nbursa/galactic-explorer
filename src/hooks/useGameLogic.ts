@@ -145,11 +145,7 @@ export const useGameLogic = (canvasContainer: Ref<HTMLElement | null>) => {
     updateCharacter()
     checkInteraction()
 
-    camera.position.set(
-      character.position.x + 5,
-      character.position.y + 5,
-      character.position.z + 5
-    )
+    camera.position.set(character.position.x, character.position.y + 2, character.position.z + 2)
     camera.lookAt(character.position)
 
     renderer.render(scene, camera)
