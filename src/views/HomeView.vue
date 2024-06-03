@@ -1,28 +1,37 @@
 <template>
   <div class="home">
     <h1>Welcome to Galactic Explorer</h1>
-    <button @click="startGame">Start Game</button>
+    <div class="controls">
+      <button @click="startGame">Start Game</button>
+      <RouterLink to="/about">About</RouterLink>
+    </div>
   </div>
 </template>
 
 <script lang="ts">
-import { defineComponent } from 'vue';
-import { useRouter } from 'vue-router';
+import { defineComponent } from 'vue'
+import { useRouter } from 'vue-router'
+import aboutView from '@/views/AboutView.vue'
 
 export default defineComponent({
   name: 'HomeView',
+  computed: {
+    aboutView() {
+      return aboutView
+    }
+  },
   setup() {
-    const router = useRouter();
+    const router = useRouter()
 
     const startGame = () => {
-      router.push({ name: 'Game' });
-    };
+      router.push({ name: 'game' })
+    }
 
     return {
-      startGame,
-    };
-  },
-});
+      startGame
+    }
+  }
+})
 </script>
 
 <style scoped>
@@ -34,9 +43,9 @@ export default defineComponent({
   height: 100vh;
   text-align: center;
 }
-button {
-  padding: 10px 20px;
-  font-size: 16px;
-  margin-top: 20px;
+.controls {
+  display: flex;
+  gap: 10px;
+  align-items: center;
 }
 </style>
