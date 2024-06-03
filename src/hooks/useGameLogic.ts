@@ -55,8 +55,11 @@ export const useGameLogic = (canvasContainer: Ref<HTMLElement | null>) => {
   }
 
   const addCharacter = () => {
+    const textureLoader = new THREE.TextureLoader()
+    const droidTexture = textureLoader.load('/textures/bb8bodytexture.jpg')
+
     const geometry = new THREE.SphereGeometry(0.5, 32, 32)
-    const material = new THREE.MeshStandardMaterial({ color: 0x0000ff })
+    const material = new THREE.MeshStandardMaterial({ map: droidTexture })
     character = new THREE.Mesh(geometry, material)
     character.position.y = 1
     scene.add(character)
