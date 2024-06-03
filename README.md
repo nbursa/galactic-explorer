@@ -1,45 +1,59 @@
-# galactic-explorer
+# Galactic Explorer
 
-This template should help get you started developing with Vue 3 in Vite.
+Galactic Explorer is a sci-fi themed platform game where you navigate through different alien worlds to retrieve ancient artifacts that hold the key to saving Earth from an impending disaster. Each level represents a different planet with unique environments, enemies, and challenges.
 
-## Recommended IDE Setup
+## Table of Contents
 
-[VSCode](https://code.visualstudio.com/) + [Volar](https://marketplace.visualstudio.com/items?itemName=Vue.volar) (and disable Vetur).
+- [Introduction](#introduction)
+- [Features](#features)
+- [Installation](#installation)
+- [Usage](#usage)
+- [Technologies Used](#technologies-used)
 
-## Type Support for `.vue` Imports in TS
+## Introduction
 
-TypeScript cannot handle type information for `.vue` imports by default, so we replace the `tsc` CLI with `vue-tsc` for type checking. In editors, we need [Volar](https://marketplace.visualstudio.com/items?itemName=Vue.volar) to make the TypeScript language service aware of `.vue` types.
+In Galactic Explorer, you play as an explorer navigating through different alien worlds to collect artifacts. Your mission is to save humanity by gathering all the artifacts and unlocking the secrets they hold.
 
-## Customize configuration
+## Features
 
-See [Vite Configuration Reference](https://vitejs.dev/config/).
+- **Sci-Fi Theme:** Explore various alien worlds with unique environments.
+- **Platform Gameplay:** Jump, run, and avoid obstacles.
+- **Levels:** Multiple levels with increasing difficulty.
+- **Enemies:** Face challenging enemies and obstacles.
+- **UI:** Interactive and user-friendly interface.
 
-## Project Setup
+## Installation
 
-```sh
+To get started with Galactic Explorer, follow these steps:
+
+1. **Clone the repository:**
+
+```bash
+git clone https://github.com/yourusername/galactic-explorer.git
+cd galactic-explorer
+```
+
+2. **Install dependencies:**
+
+```bash
 npm install
 ```
 
-### Compile and Hot-Reload for Development
+## Usage
 
-```sh
+To run the game locally, use the following command:
+
+```bash
 npm run dev
 ```
 
-### Type-Check, Compile and Minify for Production
+This will start the development server and you can access the game in your browser at `http://localhost:3000`.
 
-```sh
-npm run build
-```
+## Technologies Used
 
-### Run Unit Tests with [Vitest](https://vitest.dev/)
-
-```sh
-npm run test:unit
-```
-
-### Lint with [ESLint](https://eslint.org/)
-
-```sh
-npm run lint
-```
+- **Vite:** Fast and modern build tool for web development.
+- **Vue 3:** Front-end framework for building user interfaces.
+- **TypeScript:** Typed superset of JavaScript.
+- **Three.js:** 3D graphics library for rendering the game.
+- **Pinia:** State management library for Vue.
+- **ESLint & Prettier:** Code linting and formatting tools.
