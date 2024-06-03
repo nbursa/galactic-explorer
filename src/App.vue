@@ -17,18 +17,23 @@ import { RouterLink, RouterView } from 'vue-router'
 <style>
 header {
   position: absolute;
-  top: 2rem;
-  left: 2rem;
-  right: 2rem;
+  top: 0;
+  left: 0;
+  right: 0;
   z-index: 10;
   border-radius: 8px;
 }
 nav {
   display: flex;
-  justify-content: center;
-  gap: 20px;
-  background-color: #333;
+  justify-content: flex-end;
+  align-items: flex-end;
+  background-color: transparent;
+}
+nav a {
+  padding: 10px;
   color: white;
+  font-weight: 300;
+  text-decoration: none;
 }
 router-link {
   color: white;
