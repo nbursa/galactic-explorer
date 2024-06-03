@@ -1,21 +1,17 @@
 <template>
-  <div class="home">
-    <h1>Welcome to Galactic Explorer</h1>
+  <div class="game-menu">
     <button @click="startGame">Start Game</button>
   </div>
 </template>
 
 <script lang="ts">
 import { defineComponent } from 'vue';
-import { useRouter } from 'vue-router';
 
 export default defineComponent({
-  name: 'HomeView',
+  name: 'GameMenu',
   setup() {
-    const router = useRouter();
-
     const startGame = () => {
-      router.push({ name: 'Game' });
+      console.log('Game Started');
     };
 
     return {
@@ -26,17 +22,14 @@ export default defineComponent({
 </script>
 
 <style scoped>
-.home {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  height: 100vh;
-  text-align: center;
+.game-menu {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
 }
 button {
   padding: 10px 20px;
   font-size: 16px;
-  margin-top: 20px;
 }
 </style>
