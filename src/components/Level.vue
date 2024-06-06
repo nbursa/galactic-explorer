@@ -1,22 +1,16 @@
 <template>
-  <div class="level">
-    <!-- Level design and loading will go here -->
-  </div>
+  <div class="level"></div>
 </template>
 
 <script lang="ts">
-import { defineComponent } from 'vue';
+import { defineComponent } from 'vue'
 
 export default defineComponent({
   name: 'Level',
   setup() {
-    // Level setup logic
-
-    return {};
-  },
-});
+    return {}
+  }
+})
 </script>
 
-<style scoped>
-/* Add level styling if needed */
-</style>
+<style scoped></style>
