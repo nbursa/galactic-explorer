@@ -1,25 +1,25 @@
 const keyboard = {
-  ArrowUp: false,
-  ArrowLeft: false,
-  ArrowDown: false,
-  ArrowRight: false,
+  W: false,
+  A: false,
+  S: false,
+  D: false,
   Space: false,
   KeyE: false
 }
 
 const handleKeyDown = (event: KeyboardEvent) => {
   switch (event.code) {
-    case 'ArrowUp':
-      keyboard.ArrowUp = true
+    case 'KeyW':
+      keyboard.W = true
       break
-    case 'ArrowLeft':
-      keyboard.ArrowLeft = true
+    case 'KeyA':
+      keyboard.A = true
       break
-    case 'ArrowDown':
-      keyboard.ArrowDown = true
+    case 'KeyS':
+      keyboard.S = true
       break
-    case 'ArrowRight':
-      keyboard.ArrowRight = true
+    case 'KeyD':
+      keyboard.D = true
       break
     case 'Space':
       keyboard.Space = true
@@ -32,17 +32,17 @@ const handleKeyDown = (event: KeyboardEvent) => {
 
 const handleKeyUp = (event: KeyboardEvent) => {
   switch (event.code) {
-    case 'ArrowUp':
-      keyboard.ArrowUp = false
+    case 'KeyW':
+      keyboard.W = false
       break
-    case 'ArrowLeft':
-      keyboard.ArrowLeft = false
+    case 'KeyA':
+      keyboard.A = false
       break
-    case 'ArrowDown':
-      keyboard.ArrowDown = false
+    case 'KeyS':
+      keyboard.S = false
       break
-    case 'ArrowRight':
-      keyboard.ArrowRight = false
+    case 'KeyD':
+      keyboard.D = false
       break
     case 'Space':
       keyboard.Space = false

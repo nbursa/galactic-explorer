@@ -6,7 +6,7 @@
 </template>
 
 <script lang="ts">
-import { defineComponent, ref } from 'vue'
+import { defineComponent, ref, onMounted, onBeforeUnmount } from 'vue'
 
 export default defineComponent({
   name: 'GameMessage',
@@ -27,6 +27,20 @@ export default defineComponent({
       emit('next-level')
       hide()
     }
+
+    const handleKeyPress = (event: KeyboardEvent) => {
+      if (event.key === 'Enter') {
+        nextLevel()
+      }
+    }
+
+    onMounted(() => {
+      document.addEventListener('keyup', handleKeyPress)
+    })
+
+    onBeforeUnmount(() => {
+      document.removeEventListener('keyup', handleKeyPress)
+    })
 
     return { visible, show, hide, nextLevel }
   }

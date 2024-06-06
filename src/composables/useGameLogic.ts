@@ -1,9 +1,9 @@
 import type { Ref } from 'vue'
 import * as THREE from 'three'
-import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls.js'
 import { getKeyboardState } from '@/utils/keyboard'
 import { TextureLoader } from 'three'
 import { levelConfig, findEdgeSpot } from '@/config/gameConfig'
+import { PointerLockControls } from 'three/examples/jsm/controls/PointerLockControls.js'
 
 export const useGameLogic = (
   canvasContainer: Ref<HTMLElement | null>,
@@ -33,6 +33,41 @@ export const useGameLogic = (
 
   const addPosition = (x: number, y: number, z: number) => {
     occupiedPositions.add(getPositionKey(x, y, z))
+  }
+
+  let pointerControls: PointerLockControls | null = null
+
+  const initPointerControls = () => {
+    pointerControls = new PointerLockControls(camera, renderer.domElement)
+    if (!pointerControls) return
+
+    const pointerlockchange = () => {
+      if (document.pointerLockElement === renderer.domElement) {
+        pointerControls!.lock()
+      } else {
+        pointerControls!.unlock()
+      }
+    }
+
+    document.addEventListener('pointerlockchange', pointerlockchange)
+
+    const onClick = () => {
+      renderer.domElement.requestPointerLock()
+    }
+
+    renderer.domElement.addEventListener('click', onClick)
+
+    document.addEventListener('mousemove', (event: MouseEvent) => {
+      if (pointerControls && pointerControls.isLocked) {
+        const movementX = event.movementX || 0
+        const sensitivity = 0.002
+        camera.rotation.y -= movementX * sensitivity
+      }
+    })
+
+    scene.add(pointerControls.getObject())
+
+    return pointerControls
   }
 
   const onWindowResize = () => {
@@ -121,17 +156,37 @@ export const useGameLogic = (
     const keyboard = getKeyboardState()
     const newPosition = character.position.clone()
 
-    if (keyboard.ArrowUp) {
-      newPosition.z -= 0.05
+    const direction = new THREE.Vector3()
+
+    if (keyboard.W) {
+      camera.getWorldDirection(direction)
+      direction.y = 0
+      direction.normalize()
+      direction.multiplyScalar(0.05)
+      newPosition.add(direction)
     }
-    if (keyboard.ArrowDown) {
-      newPosition.z += 0.05
+    if (keyboard.S) {
+      camera.getWorldDirection(direction)
+      direction.y = 0
+      direction.normalize()
+      direction.multiplyScalar(0.05)
+      newPosition.sub(direction)
     }
-    if (keyboard.ArrowLeft) {
-      newPosition.x -= 0.05
+    if (keyboard.A) {
+      camera.getWorldDirection(direction)
+      direction.y = 0
+      direction.normalize()
+      direction.cross(camera.up)
+      direction.multiplyScalar(0.05)
+      newPosition.sub(direction)
     }
-    if (keyboard.ArrowRight) {
-      newPosition.x += 0.05
+    if (keyboard.D) {
+      camera.getWorldDirection(direction)
+      direction.y = 0
+      direction.normalize()
+      direction.cross(camera.up)
+      direction.multiplyScalar(0.05)
+      newPosition.add(direction)
     }
     if (keyboard.Space && canJump) {
       newPosition.y += 0.2
@@ -195,13 +250,38 @@ export const useGameLogic = (
     }
   }
 
+  let movementX = 0
+
+  const onMouseMove = (event: MouseEvent) => {
+    movementX += event.movementX || 0
+  }
+
+  document.addEventListener('mousemove', onMouseMove)
+
+  const updateCameraPosition = () => {
+    if (!pointerControls || pointerControls.isLocked) {
+      const sensitivity = 0.002
+      const angleChange = movementX * sensitivity
+
+      const distanceToCharacter = 10 // Adjust this distance as needed
+      const angleAroundCharacter = character.rotation.y + angleChange
+
+      const offsetX = Math.sin(angleAroundCharacter) * distanceToCharacter
+      const offsetZ = Math.cos(angleAroundCharacter) * distanceToCharacter
+
+      camera.position.x = character.position.x + offsetX
+      camera.position.y = character.position.y + 5 // Adjust camera height
+      camera.position.z = character.position.z + offsetZ
+      camera.lookAt(character.position)
+    }
+  }
+
   const animate = () => {
     requestAnimationFrame(animate)
     updateCharacter()
     checkInteraction()
 
-    camera.position.set(character.position.x, character.position.y + 5, character.position.z + 10)
-    camera.lookAt(character.position)
+    updateCameraPosition()
 
     renderer.render(scene, camera)
   }
@@ -209,10 +289,7 @@ export const useGameLogic = (
   const init = (level: number) => {
     if (canvasContainer.value) {
       canvasContainer.value.appendChild(renderer.domElement)
-
-      const controls = new OrbitControls(camera, renderer.domElement)
-      controls.target.set(0, 0, 0)
-      controls.update()
+      pointerControls = initPointerControls() || null
 
       const light = new THREE.DirectionalLight(0xffffff, 1)
       light.position.set(1, 1, 1).normalize()
@@ -235,14 +312,11 @@ export const useGameLogic = (
       currentLevelConfig.flora.forEach(({ x, y, z }) => addFlora(x, y, z))
       currentLevelConfig.pois.forEach(({ x, y, z, color }) => addPOI(x, y, z, color))
 
-      addCharacter(10 + level * 2) // Pass the maze size
+      addCharacter(10 + level * 2)
 
-      camera.position.set(
-        character.position.x + 5,
-        character.position.y + 5,
-        character.position.z + 5
-      )
-      camera.lookAt(new THREE.Vector3(0, 0, 0))
+      updateCameraPosition()
+      renderer.render(scene, camera)
+      animate()
     }
   }
 
