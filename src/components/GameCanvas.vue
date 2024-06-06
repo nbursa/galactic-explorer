@@ -3,27 +3,47 @@
 </template>
 
 <script lang="ts">
-import { defineComponent, ref, onMounted, onUnmounted } from 'vue'
+import { defineComponent, ref, watch, onMounted, onUnmounted } from 'vue'
 import { setupKeyboardHandlers, removeKeyboardHandlers } from '@/utils/keyboard'
-import { useGameLogic } from '@/hooks/useGameLogic'
+import { useGameLogic } from '@/composables/useGameLogic'
 
 export default defineComponent({
   name: 'GameCanvas',
-  setup() {
+  props: {
+    level: {
+      type: Number,
+      required: true
+    }
+  },
+  emits: ['levelPassed', 'interact'],
+  setup(props, { emit }) {
     const canvasContainer = ref<HTMLElement | null>(null)
-    const { init, animate, onWindowResize } = useGameLogic(canvasContainer)
+    const { init, animate, onWindowResize, handleInteraction } = useGameLogic(canvasContainer, emit)
+
+    const loadLevel = (level: number) => {
+      init(level)
+      animate()
+    }
 
     onMounted(() => {
-      init()
+      loadLevel(props.level)
       setupKeyboardHandlers()
       window.addEventListener('resize', onWindowResize, false)
-      animate()
+      window.addEventListener('keydown', handleInteraction, false)
     })
 
     onUnmounted(() => {
       removeKeyboardHandlers()
       window.removeEventListener('resize', onWindowResize)
+      window.removeEventListener('keydown', handleInteraction)
     })
+
+    watch(
+      () => props.level,
+      (newLevel) => {
+        loadLevel(newLevel)
+      }
+    )
 
     return {
       canvasContainer
