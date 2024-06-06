@@ -1,25 +1,32 @@
 <template>
   <div class="game-ui">
+    <div class="level">Level: {{ level }}</div>
     <div class="score">Score: {{ score }}</div>
     <div class="health">Health: {{ health }}</div>
   </div>
 </template>
 
 <script lang="ts">
-import { defineComponent, ref } from 'vue';
+import { defineComponent } from 'vue'
 
 export default defineComponent({
   name: 'GameUI',
-  setup() {
-    const score = ref(0);
-    const health = ref(100);
-
-    return {
-      score,
-      health,
-    };
+  props: {
+    level: {
+      type: Number,
+      required: true
+    },
+    score: {
+      type: Number,
+      required: true
+    },
+    health: {
+      type: Number,
+      required: true
+    }
   },
-});
+  setup() {}
+})
 </script>
 
 <style scoped>
@@ -29,7 +36,8 @@ export default defineComponent({
   left: 10px;
   color: white;
 }
-.score, .health {
+.score,
+.health {
   margin: 5px;
 }
 </style>
