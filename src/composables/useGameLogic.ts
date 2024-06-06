@@ -3,7 +3,7 @@ import * as THREE from 'three'
 import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls.js'
 import { getKeyboardState } from '@/utils/keyboard'
 import { TextureLoader } from 'three'
-import { levelConfig } from '@/config/gameConfig'
+import { levelConfig, findEdgeSpot } from '@/config/gameConfig'
 
 export const useGameLogic = (
   canvasContainer: Ref<HTMLElement | null>,
@@ -60,6 +60,7 @@ export const useGameLogic = (
       const rockMaterial = new THREE.MeshStandardMaterial({ color: 0x808080 })
       const rock = new THREE.Mesh(rockGeometry, rockMaterial)
       rock.position.set(x, y, z)
+      ;(rock as any).collisionSize = 1.4
       scene.add(rock)
       obstacles.push(rock)
       addPosition(x, y, z)
@@ -72,6 +73,7 @@ export const useGameLogic = (
       const floraMaterial = new THREE.MeshStandardMaterial({ color: 0x228b22 })
       const flora = new THREE.Mesh(floraGeometry, floraMaterial)
       flora.position.set(x, y + 1, z)
+      ;(flora as any).collisionSize = 1
       scene.add(flora)
       obstacles.push(flora)
       addPosition(x, y, z)
@@ -90,18 +92,13 @@ export const useGameLogic = (
     }
   }
 
-  const addCharacter = () => {
+  const addCharacter = (size: number) => {
     const textureLoader = new THREE.TextureLoader()
     const droidTexture = textureLoader.load('/textures/bb8bodytexture.jpg')
     const geometry = new THREE.SphereGeometry(0.5, 32, 32)
     const material = new THREE.MeshStandardMaterial({ map: droidTexture })
 
-    let x, y, z
-    do {
-      x = (Math.floor(Math.random() * 21) - 10) * 2
-      y = 1
-      z = (Math.floor(Math.random() * 21) - 10) * 2
-    } while (!isPositionFree(x, y, z))
+    const { x, y, z } = findEdgeSpot(occupiedPositions, size) // Use the new function to find an edge spot
 
     character = new THREE.Mesh(geometry, material)
     character.position.set(x, y, z)
@@ -111,8 +108,9 @@ export const useGameLogic = (
 
   const checkCollision = (newPosition: THREE.Vector3): boolean => {
     for (const obstacle of obstacles) {
+      const collisionThreshold = (obstacle as any).collisionSize || 1.5
       const distance = newPosition.distanceTo(obstacle.position)
-      if (distance < 1.5) {
+      if (distance < collisionThreshold) {
         return true
       }
     }
@@ -202,7 +200,7 @@ export const useGameLogic = (
     updateCharacter()
     checkInteraction()
 
-    camera.position.set(character.position.x, character.position.y + 2, character.position.z + 2)
+    camera.position.set(character.position.x, character.position.y + 5, character.position.z + 10)
     camera.lookAt(character.position)
 
     renderer.render(scene, camera)
@@ -213,6 +211,7 @@ export const useGameLogic = (
       canvasContainer.value.appendChild(renderer.domElement)
 
       const controls = new OrbitControls(camera, renderer.domElement)
+      controls.target.set(0, 0, 0)
       controls.update()
 
       const light = new THREE.DirectionalLight(0xffffff, 1)
@@ -236,9 +235,13 @@ export const useGameLogic = (
       currentLevelConfig.flora.forEach(({ x, y, z }) => addFlora(x, y, z))
       currentLevelConfig.pois.forEach(({ x, y, z, color }) => addPOI(x, y, z, color))
 
-      addCharacter()
+      addCharacter(10 + level * 2) // Pass the maze size
 
-      camera.position.set(5, 5, 5)
+      camera.position.set(
+        character.position.x + 5,
+        character.position.y + 5,
+        character.position.z + 5
+      )
       camera.lookAt(new THREE.Vector3(0, 0, 0))
     }
   }
