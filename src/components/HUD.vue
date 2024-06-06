@@ -1,22 +1,16 @@
 <template>
-  <div class="hud">
-    <!-- HUD components -->
-  </div>
+  <div class="hud"></div>
 </template>
 
 <script lang="ts">
-import { defineComponent } from 'vue';
+import { defineComponent } from 'vue'
 
 export default defineComponent({
   name: 'HUD',
   setup() {
-    // HUD setup logic
-
-    return {};
-  },
-});
+    return {}
+  }
+})
 </script>
 
-<style scoped>
-/* Add HUD styling if needed */
-</style>
+<style scoped></style>
