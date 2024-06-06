@@ -5,7 +5,7 @@
 <script lang="ts">
 import { defineComponent, ref, watch, onMounted, onUnmounted } from 'vue'
 import { setupKeyboardHandlers, removeKeyboardHandlers } from '@/utils/keyboard'
-import { useGameLogic } from '@/composables/useGameLogic'
+import { useGame } from '@/composables/useGame'
 
 export default defineComponent({
   name: 'GameCanvas',
@@ -18,7 +18,7 @@ export default defineComponent({
   emits: ['levelPassed', 'interact'],
   setup(props, { emit }) {
     const canvasContainer = ref<HTMLElement | null>(null)
-    const { init, animate, onWindowResize, handleInteraction } = useGameLogic(canvasContainer, emit)
+    const { init, animate, onWindowResize, handleInteraction } = useGame(canvasContainer, emit)
 
     const loadLevel = (level: number) => {
       init(level)
