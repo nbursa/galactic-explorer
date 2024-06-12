@@ -9,12 +9,20 @@ export class PlayerService {
     const material = new THREE.MeshBasicMaterial({ color: 0xff0000 });
     const mesh = new THREE.Mesh(geometry, material);
     this.player = new Player(mesh);
-    this.player.mesh.position.y = 0.5;
+    this.player.mesh.position.set(0.5, 0.5, 0.5);
     scene.add(this.player.mesh);
   }
 
   static movePlayer(direction: THREE.Vector3): void {
-    this.player.mesh.position.add(direction);
+    const newPosition = this.player.mesh.position.clone().add(direction);
+    this.player.mesh.position.set(
+      Math.round(newPosition.x),
+      Math.round(newPosition.y),
+      Math.round(newPosition.z)
+    );
+    console.log(
+      `Player new position: ${this.player.mesh.position.x}, ${this.player.mesh.position.y}, ${this.player.mesh.position.z}`
+    );
   }
 
   static getPlayerPosition(): THREE.Vector3 {

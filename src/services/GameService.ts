@@ -9,6 +9,7 @@ export class GameService {
   private static renderer: THREE.WebGLRenderer;
   private static obstacles: THREE.Group;
   private static platform: THREE.Group;
+  private static cellSize = 1;
 
   static init(containerId: string): void {
     this.scene = new THREE.Scene();
@@ -17,9 +18,9 @@ export class GameService {
     this.renderer.setSize(window.innerWidth, window.innerHeight);
     document.getElementById(containerId)?.appendChild(this.renderer.domElement);
 
-    this.createPlatform(10, 10);
+    this.createPlatform(100, 100);
     PlayerService.init(this.scene);
-    this.createObstacles(5); // initial number of obstacles
+    this.createObstacles(50); // initial number of obstacles
 
     this.addEventListeners();
     this.animate();
@@ -27,7 +28,7 @@ export class GameService {
 
   private static createPlatform(width: number, height: number): void {
     this.platform = new THREE.Group();
-    const geometry = new THREE.PlaneGeometry(width, height);
+    const geometry = new THREE.PlaneGeometry(width * this.cellSize, height * this.cellSize);
     const material = new THREE.MeshBasicMaterial({ color: 0x00ff00, side: THREE.DoubleSide });
     const plane = new THREE.Mesh(geometry, material);
     plane.rotation.x = -Math.PI / 2;
@@ -44,15 +45,15 @@ export class GameService {
 
     for (let i = -width / 2; i <= width / 2; i++) {
       const lineGeometryX = new THREE.BufferGeometry().setFromPoints([
-        new THREE.Vector3(i, 0, -height / 2),
-        new THREE.Vector3(i, 0, height / 2)
+        new THREE.Vector3(i * this.cellSize, 0, (-height / 2) * this.cellSize),
+        new THREE.Vector3(i * this.cellSize, 0, (height / 2) * this.cellSize)
       ]);
       const lineX = new THREE.Line(lineGeometryX, lineMaterial);
       grid.add(lineX);
 
       const lineGeometryZ = new THREE.BufferGeometry().setFromPoints([
-        new THREE.Vector3(-width / 2, 0, i),
-        new THREE.Vector3(width / 2, 0, i)
+        new THREE.Vector3((-width / 2) * this.cellSize, 0, i * this.cellSize),
+        new THREE.Vector3((width / 2) * this.cellSize, 0, i * this.cellSize)
       ]);
       const lineZ = new THREE.Line(lineGeometryZ, lineMaterial);
       grid.add(lineZ);
@@ -63,35 +64,64 @@ export class GameService {
 
   private static createObstacles(count: number): void {
     this.obstacles = new THREE.Group();
-    const geometry = new THREE.BoxGeometry(1, 1, 1);
+    const geometry = new THREE.BoxGeometry(this.cellSize, this.cellSize, this.cellSize);
     const material = new THREE.MeshBasicMaterial({ color: 0x0000ff });
     for (let i = 0; i < count; i++) {
       const obstacle = new Obstacle(new THREE.Mesh(geometry, material));
-      obstacle.mesh.position.set(Math.random() * 10 - 5, 0.5, Math.random() * 10 - 5);
+      obstacle.mesh.position.set(
+        (Math.floor(Math.random() * 100) - 50) * this.cellSize + this.cellSize / 2,
+        this.cellSize / 2,
+        (Math.floor(Math.random() * 100) - 50) * this.cellSize + this.cellSize / 2
+      );
       this.obstacles.add(obstacle.mesh);
     }
     this.scene.add(this.obstacles);
   }
 
   private static addEventListeners(): void {
-    window.addEventListener('keydown', this.handleKeyDown);
+    window.addEventListener('keydown', this.handleKeyDown.bind(this));
   }
 
   private static handleKeyDown(event: KeyboardEvent): void {
-    const moveDistance = 1;
+    const moveDistance = this.cellSize;
+    let direction = new THREE.Vector3(0, 0, 0);
+
     switch (event.key) {
       case 'ArrowUp':
-        PlayerService.movePlayer(new THREE.Vector3(0, 0, -moveDistance));
+        direction.set(0, 0, -moveDistance);
         break;
       case 'ArrowDown':
-        PlayerService.movePlayer(new THREE.Vector3(0, 0, moveDistance));
+        direction.set(0, 0, moveDistance);
         break;
       case 'ArrowLeft':
-        PlayerService.movePlayer(new THREE.Vector3(-moveDistance, 0, 0));
+        direction.set(-moveDistance, 0, 0);
         break;
       case 'ArrowRight':
-        PlayerService.movePlayer(new THREE.Vector3(moveDistance, 0, 0));
+        direction.set(moveDistance, 0, 0);
         break;
+      default:
+        return; // exit this handler for other keys
+    }
+
+    console.log(
+      `Key pressed: ${event.key}, Direction: ${direction.x}, ${direction.y}, ${direction.z}`
+    );
+
+    const newPosition = PlayerService.getPlayerPosition().clone().add(direction);
+    const halfWidth = 50 * this.cellSize;
+    const halfHeight = 50 * this.cellSize;
+
+    // Ensure the player stays within the platform bounds
+    if (
+      newPosition.x >= -halfWidth &&
+      newPosition.x <= halfWidth &&
+      newPosition.z >= -halfHeight &&
+      newPosition.z <= halfHeight
+    ) {
+      PlayerService.movePlayer(direction);
+      console.log(
+        `Player moved to: ${PlayerService.getPlayerPosition().x}, ${PlayerService.getPlayerPosition().y}, ${PlayerService.getPlayerPosition().z}`
+      );
     }
   }
 
