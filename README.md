@@ -1,6 +1,6 @@
 # Galactic Explorer
 
-Galactic Explorer is a sci-fi themed platform game where you navigate through different alien worlds to retrieve ancient artifacts that hold the key to saving Earth from an impending disaster. Each level represents a different planet with unique environments, enemies, and challenges.
+Galactic Explorer is a sci-fi-themed platform game where players navigate through different alien worlds to retrieve ancient artifacts that are key to saving Earth from an impending disaster. Each level represents a different planet with unique environments, enemies, and challenges.
 
 ## Table of Contents
 
